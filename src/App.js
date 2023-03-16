@@ -1,14 +1,17 @@
 import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages";
+import Signin from "./pages/Auth/signin";
 
 export default function App() {
   return (
-    <>
-      <div className="tabs">
-        <a className="tab tab-lifted">Tab 1</a>
-        <a className="tab tab-lifted tab-active">Tab 2</a>
-        <a className="tab tab-lifted">Tab 3</a>
-      </div>
-      <h1 className=" text-3xl font-bold underline italic">Hello world!</h1>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route>
+          <Route path="/" element={<Home />} />
+          <Route path="/signin" element={<Signin />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
