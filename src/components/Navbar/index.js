@@ -36,16 +36,16 @@ function Navbar() {
             <div className="mt-4">
               <ul className="">
                 <li className="font-['Rubik'] text-xl font-semibold text-center my-2 text-[#4F5665] cursor-pointer">
-                  <Link to="/">Sign in</Link>
+                  <Link to="/">Home</Link>
                 </li>
                 <li className="font-['Rubik'] text-xl font-semibold text-center my-2 text-[#4F5665] cursor-pointer">
-                  Product
+                  <Link to="/products">Product</Link>
                 </li>
                 <li className="font-['Rubik'] text-xl font-semibold text-center my-2 text-[#4F5665] cursor-pointer">
-                  Your Chart
+                  <Link to="/cart"> Your Cart</Link>
                 </li>
                 <li className="font-['Rubik'] text-xl font-semibold text-center my-2 text-[#4F5665] cursor-pointer">
-                  History
+                  <Link to="/your-order">History</Link>
                 </li>
                 <li className="font-['Rubik'] text-xl font-semibold text-center my-2 text-[#4F5665] cursor-pointer">
                   <Link to="/signin">Sign in</Link>
@@ -71,16 +71,16 @@ function Navbar() {
           </Link>
           <div className="list-none flex items-stretch">
             <li className="self-center mx-3 font-['Rubik'] text-[#4F5665] cursor-pointer active:text-[#6A4029]">
-              Home
+              <Link to="/">Home</Link>
             </li>
             <li className="self-center mx-3 font-['Rubik'] text-[#4F5665] cursor-pointer">
-              Product
+              <Link to="/products">Product</Link>
             </li>
             <li className="self-center mx-3 font-['Rubik'] text-[#4F5665] cursor-pointer">
-              Your Cart
+              <Link to="/cart">Your Cart</Link>
             </li>
             <li className="self-center mx-3 font-['Rubik'] text-[#4F5665] cursor-pointer">
-              History
+              <Link to="/your-order"> History</Link>
             </li>
           </div>
           <div>

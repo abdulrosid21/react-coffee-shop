@@ -3,8 +3,8 @@ import styles from "./notfound.module.css";
 
 function Notfound() {
   return (
-    <div className="bg-gray-100 h-screen justify-center">
-      <center className="mt-24 m-auto">
+    <div className="bg-gray-100 h-screen flex">
+      <center className="justify-center m-auto">
         <svg
           className={styles.emojis}
           enableBackground="new 0 0 226 249.135"
