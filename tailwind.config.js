@@ -14,6 +14,7 @@ module.exports = {
         "image-primary": "url('/src/assets/img/image-primary.jpeg')",
         "image-secondary": "url('/src/assets/img/image-secondary.jpeg')",
         "image-lamp": "url('/src/assets/img/image-lamp.jpeg')",
+        order: "url('/src/assets/img/order.jpeg')",
       },
     },
   },

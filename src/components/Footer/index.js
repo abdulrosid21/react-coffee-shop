@@ -3,7 +3,7 @@ import { Icon } from "@iconify/react";
 
 function Footer() {
   return (
-    <div className="w-full h-full grid lg:grid-cols-2 gap-3 p-8">
+    <div className="w-full h-full grid lg:grid-cols-2 gap-3 px-8 pt-28">
       <div>
         <div className="flex items-stretch py-5">
           <img

@@ -12,3 +12,8 @@ body {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+@layer components {
+  .btn {
+    @apply hover:bg-neutral-content border-0;
+  }
+}
