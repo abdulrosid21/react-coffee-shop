@@ -215,7 +215,7 @@ function Home() {
           pleasure.
         </p>
         <div className="w-screen h-full flex gap-4 justify-between px-10">
-          <div className="h-full w-[30%] mt-10 rounded-3xl border-2 border-yellow">
+          <div className="h-full w-[30%] mt-10 rounded-3xl border-[1px] border-yellow">
             <div className="flex justify-start px-8">
               <img
                 className="h-10 rounded-full my-2"
@@ -229,7 +229,7 @@ function Home() {
               recommended!
             </p>
           </div>
-          <div className="h-full w-[30%] mt-10 rounded-3xl border-2 border-yellow">
+          <div className="h-full w-[30%] mt-10 rounded-3xl border-[1px] border-yellow">
             <div className="flex justify-start px-8">
               <img
                 className="h-10 rounded-full my-2"
@@ -243,7 +243,7 @@ function Home() {
               recommended!
             </p>
           </div>
-          <div className="h-full w-[30%] mt-10 rounded-3xl border-2 border-yellow">
+          <div className="h-full w-[30%] mt-10 rounded-3xl border-[1px] border-yellow">
             <div className="flex justify-start px-8">
               <img
                 className="h-10 rounded-full my-2"
