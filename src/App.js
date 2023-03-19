@@ -13,6 +13,9 @@ import HistoryOrder from "./pages/Order/historyOrder";
 import Notfound from "./pages/notfound";
 import Order from "./pages/Order";
 import DetailOrder from "./pages/Order/detailOrder";
+import Dashboard from "./pages/Admin";
+import CreateMenus from "./pages/Admin/createMenus";
+import CreatePromo from "./pages/Admin/createPromo";
 
 export default function App() {
   return (
@@ -31,6 +34,9 @@ export default function App() {
           <Route path="/cart" element={<Order />} />
           <Route path="/your-order" element={<HistoryOrder />} />
           <Route path="/your-order/:id" element={<DetailOrder />} />
+          <Route path="/admin" element={<Dashboard />} />
+          <Route path="/admin/create-menu" element={<CreateMenus />} />
+          <Route path="/admin/create-promo" element={<CreatePromo />} />
           <Route path="/*" element={<Notfound />} />
         </Route>
       </Routes>
