@@ -1,11 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { register } from "../../utils/redux/action/register";
 
 function Signup() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    phone: "",
+  });
+  const handleInputForm = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  console.log(form);
+  const handleSubmitForm = async () => {
+    try {
+      const result = await dispatch(register(form));
+      console.log(result);
+      navigate("/signin");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <main className="flex">
-      <section className="hidden sm:flex flex-1 bg-image-primary min-h-screen bg-cover bg-center">
-        a
-      </section>
+      <section className="hidden sm:flex flex-1 bg-image-primary min-h-screen bg-cover bg-center" />
       <section className="flex-1 bg-image-primary bg-cover sm:bg-none grid w-full">
         <div className="bg-white opacity-95 sm:rounded-xl p-2 grid gap-3">
           <div className="p-3">
@@ -35,14 +57,13 @@ function Signup() {
               </label>
               <div className="border-2 rounded-xl">
                 <input
-                  value=""
                   className="w-full bg-transparent border-transparent focus:border-transparent focus:ring-0 placeholder:text-sm"
                   type="email"
-                  id="email"
+                  name="email"
                   placeholder="Enter your email address"
+                  onChange={handleInputForm}
                 />
               </div>
-              <div id="error-email" />
             </div>
             <div>
               <label
@@ -53,14 +74,13 @@ function Signup() {
               </label>
               <div className="border-2 rounded-xl">
                 <input
-                  value=""
                   className="w-full bg-transparent border-transparent focus:border-transparent focus:ring-0 placeholder:text-sm"
                   type="password"
-                  id="password"
+                  name="password"
                   placeholder="Enter your password"
+                  onChange={handleInputForm}
                 />
               </div>
-              <div id="error-password" />
             </div>
             <div>
               <label
@@ -71,18 +91,17 @@ function Signup() {
               </label>
               <div className="border-2 rounded-xl">
                 <input
-                  value=""
                   className="w-full bg-transparent border-transparent focus:border-transparent focus:ring-0 placeholder:text-sm"
-                  type="number"
-                  id="phoneNumber"
+                  type="text"
+                  name="phone"
                   placeholder="Enter your phone number"
+                  onChange={handleInputForm}
                 />
               </div>
-              <div id="error-number" />
             </div>
             <button
               type="button"
-              onClick="readData()"
+              onClick={handleSubmitForm}
               className="h-12 rounded-xl bg-yellow font-['Rubik'] text-brown"
             >
               Sign Up

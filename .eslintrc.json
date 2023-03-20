@@ -48,6 +48,7 @@
         "aspects": ["noHref", "invalidHref", "preferButton"]
       }
     ],
-    "react/jsx-one-expression-per-line": ["off", { "allow": "none" }]
+    "react/jsx-one-expression-per-line": ["off", { "allow": "none" }],
+    "default-param-last": ["off"]
   }
 }
