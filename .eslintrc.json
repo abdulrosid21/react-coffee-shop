@@ -47,6 +47,7 @@
         "specialLink": ["hrefLeft", "hrefRight"],
         "aspects": ["noHref", "invalidHref", "preferButton"]
       }
-    ]
+    ],
+    "react/jsx-one-expression-per-line": ["off", { "allow": "none" }]
   }
 }
