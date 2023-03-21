@@ -83,12 +83,12 @@ function Signin() {
                 <h1>Already have an account?</h1>
                 <hr className="w-full flex-1 content-center my-auto" />
               </div>
-              <a href="signin.html">
+              <a href="/signup">
                 <button
                   type="button"
                   className="h-12 w-full rounded-xl bg-brown font-['Rubik'] text-primary"
                 >
-                  Login here
+                  Register here
                 </button>
               </a>
             </div>

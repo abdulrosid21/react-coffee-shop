@@ -31,7 +31,7 @@ const register = (state = initialState, action) => {
         data: action.payload.data,
         isLoading: false,
         isError: true,
-        message: action.payload.data,
+        message: action.payload.response.data.msg,
       };
     }
     default: {
