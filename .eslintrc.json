@@ -49,6 +49,19 @@
       }
     ],
     "react/jsx-one-expression-per-line": ["off", { "allow": "none" }],
-    "default-param-last": ["off"]
+    "default-param-last": ["off"],
+    "jsx-a11y/no-noninteractive-element-interactions": [
+      "error",
+      {
+        "handlers": [
+          "onClick",
+          "onMouseDown",
+          "onMouseUp",
+          "onKeyPress",
+          "onKeyDown",
+          "onKeyUp"
+        ]
+      }
+    ]
   }
 }

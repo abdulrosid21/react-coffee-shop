@@ -1,8 +1,11 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
 
 function Profile() {
+  const user = useSelector((state) => state.user.data.data);
+  console.log(user);
   return (
     <>
       <Navbar />
@@ -18,18 +21,21 @@ function Profile() {
               <div className="w-full h-[95%] bg-primary rounded-t-xl flex flex-col p-3">
                 <div className="flex flex-col h-full justify-around">
                   <div className="flex flex-col gap-4">
+                    <input className="hidden" type="file" name="image" id="" />
                     <img
                       className="h-20 w-20 rounded-full object-cover object-center mx-auto"
-                      src={require("../../assets/img/people.png")}
+                      src={
+                        user.image
+                          ? process.env.REACT_APP_URL_CLOUDINARY + user.image
+                          : `${process.env.REACT_APP_URL_CLOUDINARY}Coffee%20Shop/Basic_Ui__186_rcq7oe.jpg`
+                      }
                       alt=""
                     />
                     <div className="text-center">
                       <h1 className="font-['Poppins'] font-semibold text-black text-xl">
-                        Zulaikha
+                        {user.display_name ? user.display_name : "New User"}
                       </h1>
-                      <h6 className="font-['Rubik'] text-xs">
-                        zulaikha17@gmail.com
-                      </h6>
+                      <h6 className="font-['Rubik'] text-xs">{user.email}</h6>
                     </div>
                   </div>
                   <div>
@@ -63,9 +69,8 @@ function Profile() {
                       <input
                         className="w-full border-transparent focus:ring-0 focus:border-transparent"
                         type="email"
-                        value=""
                         name=""
-                        id="email"
+                        placeholder={user.email}
                       />
                     </div>
                   </div>
@@ -79,10 +84,8 @@ function Profile() {
                       </h2>
                       <input
                         className="w-full border-transparent focus:ring-0 focus:border-transparent"
-                        type="number"
-                        value=""
-                        name=""
-                        id="phoneNumber"
+                        type="text"
+                        placeholder={user.phone}
                       />
                     </div>
                   </div>
@@ -96,9 +99,12 @@ function Profile() {
                       <input
                         className="w-full border-transparent focus:ring-0 focus:border-transparent"
                         type="text"
-                        value=""
                         name=""
-                        id="deliveredAdress"
+                        placeholder={
+                          user.address
+                            ? user.address
+                            : "Please input your address"
+                        }
                       />
                     </div>
                   </div>
@@ -130,9 +136,10 @@ function Profile() {
                       <input
                         className="w-full h-6 bg-transparent border-transparent focus:ring-0 focus:border-transparent"
                         type="text"
-                        value=""
-                        name=""
                         id="displayName"
+                        placeholder={
+                          user.display_name ? user.display_name : "New User"
+                        }
                       />
                     </div>
                   </div>
@@ -144,9 +151,9 @@ function Profile() {
                       <input
                         className="w-full h-6 bg-transparent border-transparent focus:ring-0 focus:border-transparent"
                         type="date"
-                        value=""
-                        name=""
-                        id="date"
+                        placeholder={
+                          user.dateofbirth ? user.dateofbirth : Date.now()
+                        }
                       />
                     </div>
                   </div>
@@ -158,9 +165,11 @@ function Profile() {
                       <input
                         className="w-full h-6 bg-transparent border-transparent focus:ring-0 focus:border-transparent"
                         type="text"
-                        value=""
-                        name=""
-                        id="firstName"
+                        placeholder={
+                          user.first_name
+                            ? user.first_name
+                            : "input your first name"
+                        }
                       />
                     </div>
                   </div>
@@ -205,9 +214,11 @@ function Profile() {
                       <input
                         className="w-full h-6 bg-transparent border-transparent focus:ring-0 focus:border-transparent"
                         type="text"
-                        value=""
-                        name=""
-                        id="lastName"
+                        placeholder={
+                          user.last_name
+                            ? user.last_name
+                            : "input your last name"
+                        }
                       />
                     </div>
                   </div>
