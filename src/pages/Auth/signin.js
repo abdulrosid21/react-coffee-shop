@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { signin } from "../../utils/redux/action/signin";
-import { user } from "../../utils/redux/action/userId";
+import { getDataUser } from "../../utils/redux/action/userId";
 
 function Signin() {
   const dispatch = useDispatch();
@@ -21,7 +21,7 @@ function Signin() {
       e.preventDefault();
       const result = await dispatch(signin(form));
       localStorage.setItem("token", result.value.data.token);
-      dispatch(user());
+      await dispatch(getDataUser());
       navigate("/");
     } catch (error) {
       console.log(error);

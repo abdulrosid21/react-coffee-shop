@@ -1,9 +1,11 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { Outlet, Link } from "react-router-dom";
 
 function Navbar() {
+  const user = useSelector((state) => state.user.data);
   const token = localStorage.getItem("token");
   const [open, setOpen] = useState(false);
 
@@ -138,7 +140,11 @@ function Navbar() {
                   <img
                     onClick={() => setOpen(!open)}
                     className="h-10 w-10 rounded-full object-cover"
-                    src={require("../../assets/img/people.png")}
+                    src={
+                      user.image
+                        ? process.env.REACT_APP_URL_CLOUDINARY + user.image
+                        : `${process.env.REACT_APP_URL_CLOUDINARY}Coffee%20Shop/Basic_Ui__186_rcq7oe.jpg`
+                    }
                     alt="Profile people"
                   />
                   {open && (
