@@ -1,10 +1,33 @@
-import React from "react";
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import Button from "../../components/Button";
 import Footer from "../../components/Footer";
 import ListProduct from "../../components/ListProduct";
 import Navbar from "../../components/Navbar";
 import Promo from "../../components/Promos";
+import axios from "../../utils/axios";
 
-function Products() {
+function Products(props) {
+  const [reqType, setReqType] = useState("Foods");
+  const [menus, setMenus] = useState([]);
+
+  const [searchParams] = useSearchParams();
+  const params = Object.fromEntries([...searchParams]);
+  const getDataMenus = async () => {
+    try {
+      const result = await axios.get(
+        "menus?keyword=&column=&sort=&limit=&category=&page="
+      );
+      setMenus(result.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getDataMenus();
+  }, []);
+
   return (
     <>
       <Navbar />
@@ -34,39 +57,34 @@ function Products() {
         </div>
         <div className="border-l-[1px] border-neutral-400 md:col-span-3">
           <div className="grid md:grid-cols-5 md:gap-2 mt-3">
-            <button
-              className="border-b-2 border-transparent hover:border-brown hover:border-b-2  font-['Poppins] font-semibold"
-              type="button"
-            >
-              Foods
-            </button>
-            <button
-              className="border-b-2 border-transparent hover:border-brown hover:border-b-2  font-['Poppins] font-semibold"
-              type="button"
-            >
-              Coffee
-            </button>
-            <button
-              className="border-b-2 border-transparent hover:border-brown hover:border-b-2  font-['Poppins] font-semibold"
-              type="button"
-            >
-              Non Coffee
-            </button>
-            <button
-              className="border-b-2 border-transparent hover:border-brown hover:border-b-2  font-['Poppins] font-semibold"
-              type="button"
-            >
-              Snack
-            </button>
-            <button
-              className="border-b-2 border-transparent hover:border-brown hover:border-b-2  font-['Poppins] font-semibold"
-              type="button"
-            >
-              Add ons
-            </button>
+            <Button
+              buttonText="Foods"
+              reqType={reqType}
+              setReqType={setReqType}
+            />
+            <Button
+              buttonText="Coffee"
+              reqType={reqType}
+              setReqType={setReqType}
+            />
+            <Button
+              buttonText="None Coffee"
+              reqType={reqType}
+              setReqType={setReqType}
+            />
+            <Button
+              buttonText="Snack"
+              reqType={reqType}
+              setReqType={setReqType}
+            />
+            <Button
+              buttonText="Add Ons"
+              reqType={reqType}
+              setReqType={setReqType}
+            />
           </div>
           <div className="w-[90%] my-6 mx-auto">
-            <ListProduct />
+            <ListProduct menus={menus} />
           </div>
         </div>
       </main>

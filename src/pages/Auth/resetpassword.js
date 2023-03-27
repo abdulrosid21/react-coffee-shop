@@ -1,8 +1,53 @@
-import React from "react";
+/* eslint-disable no-unused-vars */
+import React, { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "../../utils/axios";
 
 function ResetPassword() {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [form, setForm] = useState({
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const handleInputForm = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  const resetPassword = async () => {
+    try {
+      const result = await axios.patch(`users/reset-password/${id}`, form);
+      toast.info(result.data.msg, {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setTimeout(() => {
+        navigate("/signin");
+      }, 3000);
+    } catch (error) {
+      toast.error(error.response.data.msg, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
   return (
     <main className="flex">
+      <ToastContainer />
       <section className="hidden sm:flex flex-1 bg-image-primary min-h-screen bg-cover bg-center" />
       <section className="flex-1 bg-image-primary bg-cover sm:bg-none grid w-full">
         <div className="bg-white opacity-95 sm:rounded-xl p-2 grid gap-3">
@@ -30,23 +75,26 @@ function ResetPassword() {
                 <input
                   className="w-full bg-transparent border-transparent focus:border-transparent focus:ring-0 placeholder:text-sm"
                   type="text"
-                  name="text"
+                  name="newPassword"
                   placeholder="Enter new password"
+                  onChange={handleInputForm}
                 />
               </div>
               <div className="border-2 rounded-xl">
                 <input
                   className="w-full bg-transparent border-transparent focus:border-transparent focus:ring-0 placeholder:text-sm"
                   type="text"
-                  name="text"
+                  name="confirmPassword"
                   placeholder="Repeat new password"
+                  onChange={handleInputForm}
                 />
               </div>
             </div>
             <button
               id="sendButton"
-              type="submit"
+              type="button"
               className="h-12 rounded-xl bg-yellow font-['Rubik'] text-brown"
+              onClick={resetPassword}
             >
               Send
             </button>
