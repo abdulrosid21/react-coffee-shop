@@ -1,8 +1,48 @@
-import React from "react";
+/* eslint-disable no-console */
+import React, { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { updatePassword } from "../../utils/redux/action/userId";
 
 function EditPassword() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const handleInputForm = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  console.log(form);
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await dispatch(updatePassword(form));
+      toast.success(result.value.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setTimeout(() => {
+        navigate("/profile");
+      }, 5000);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <main className="flex">
+      <ToastContainer />
       <section className="hidden sm:flex flex-1 bg-image-primary min-h-screen bg-cover bg-center" />
       <section className="flex-1 bg-image-primary bg-cover sm:bg-none grid w-full">
         <div className="bg-white opacity-95 sm:rounded-xl p-2 grid gap-3">
@@ -22,13 +62,17 @@ function EditPassword() {
             Change your password
           </h1>
           <p className="text-center">Please input 6 character or more</p>
-          <form className="form flex flex-col justify-center mx-auto gap-2 p-3 w-full sm:w-[80%] md:w-[70%] my-4">
+          <form
+            onSubmit={handleUpdatePassword}
+            className="form flex flex-col justify-center mx-auto gap-2 p-3 w-full sm:w-[80%] md:w-[70%] my-4"
+          >
             <div className="flex flex-col gap-4">
               <div className="border-2 rounded-xl">
                 <input
                   className="w-full bg-transparent border-transparent focus:border-transparent focus:ring-0 placeholder:text-sm"
                   type="text"
-                  name="text"
+                  name="oldPassword"
+                  onChange={handleInputForm}
                   placeholder="Enter your old password"
                 />
               </div>
@@ -36,7 +80,8 @@ function EditPassword() {
                 <input
                   className="w-full bg-transparent border-transparent focus:border-transparent focus:ring-0 placeholder:text-sm"
                   type="text"
-                  name="text"
+                  name="newPassword"
+                  onChange={handleInputForm}
                   placeholder="Enter new password"
                 />
               </div>
@@ -44,17 +89,17 @@ function EditPassword() {
                 <input
                   className="w-full bg-transparent border-transparent focus:border-transparent focus:ring-0 placeholder:text-sm"
                   type="text"
-                  name="text"
+                  name="confirmPassword"
+                  onChange={handleInputForm}
                   placeholder="Repeat new password"
                 />
               </div>
             </div>
             <button
-              id="sendButton"
               type="submit"
               className="h-12 rounded-xl bg-yellow font-['Rubik'] text-brown"
             >
-              Send
+              Change
             </button>
           </form>
         </div>

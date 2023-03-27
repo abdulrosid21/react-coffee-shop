@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { signin } from "../../utils/redux/action/signin";
 import { getDataUser } from "../../utils/redux/action/userId";
 
@@ -79,9 +79,11 @@ function Signin() {
                 />
               </div>
             </div>
-            <h1 className="font-['Rubik'] text-brown font-semibold underline text-xs">
-              Forgot Password?
-            </h1>
+            <Link to="/forgotpassword">
+              <h1 className="font-['Rubik'] cursor-pointer text-brown font-semibold underline text-xs">
+                Forgot Password?
+              </h1>
+            </Link>
             <button
               type="button"
               onClick={handleSignIn}

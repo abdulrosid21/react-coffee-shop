@@ -13,3 +13,8 @@ export const updateProfile = (data) => ({
   type: "PROFILE",
   payload: axios.patch("users/editdata", data),
 });
+
+export const updatePassword = (data) => ({
+  type: "UPDATE_PWD",
+  payload: axios.patch("users/edit-password", data),
+});

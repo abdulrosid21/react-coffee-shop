@@ -1,17 +1,53 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
+import axios from "../../utils/axios";
 
 function Navbar() {
+  const navigate = useNavigate();
   const user = useSelector((state) => state.user.data);
   const token = localStorage.getItem("token");
   const [open, setOpen] = useState(false);
 
+  const logout = async () => {
+    try {
+      await axios.post("users/logout");
+
+      localStorage.clear();
+      navigate("/");
+      toast.info("Success logout from your account", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (error) {
+      toast.error("Can't logout from your account", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
   return (
     <>
       <nav className="relative w-screen z-50">
+        <ToastContainer />
         <div className="lg:hidden p-5">
           <input
             className="absolute top-0 inset-x-0 w-full h-12 opacity-0 z-10 cursor-pointer peer"
@@ -65,8 +101,11 @@ function Navbar() {
                   <Link to="/your-order">History</Link>
                 </li>
                 {token ? (
-                  <li className="font-['Rubik'] text-xl font-semibold text-center my-2 text-[#4F5665] cursor-pointer">
-                    <Link to="/signin">Logout</Link>
+                  <li
+                    onClick={logout}
+                    className="font-['Rubik'] text-xl font-semibold text-center my-2 text-[#4F5665] cursor-pointer"
+                  >
+                    Logout
                   </li>
                 ) : (
                   <>
@@ -183,7 +222,7 @@ function Navbar() {
                           </li>
                         </Link>
                         <li
-                          onClick={() => setOpen(false)}
+                          onClick={logout}
                           className="cursor-pointer hover:bg-brown hover:text-white font-['Rubik'] w-full"
                         >
                           Logout

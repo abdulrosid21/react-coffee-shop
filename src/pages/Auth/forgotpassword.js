@@ -1,8 +1,50 @@
-import React from "react";
+/* eslint-disable no-console */
+import React, { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import axios from "../../utils/axios";
+
+import "react-toastify/dist/ReactToastify.css";
 
 function Forgotpassword() {
+  const [form, setForm] = useState({
+    email: "",
+  });
+  const handleInputForm = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  const sendingEmail = async (e) => {
+    try {
+      e.preventDefault();
+      const result = await axios.post(
+        `${process.env.REACT_APP_URL_LOCAL}users/forgot-password`,
+        form
+      );
+      toast.success(result.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (error) {
+      toast.info(error.response.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
   return (
     <main className="flex">
+      <ToastContainer />
       <section className="hidden sm:flex flex-1 bg-image-primary min-h-screen bg-cover bg-center" />
       <section className="flex-1 bg-image-primary bg-cover sm:bg-none grid w-full">
         <div className="bg-white opacity-95 sm:rounded-xl p-2 grid gap-3">
@@ -22,19 +64,22 @@ function Forgotpassword() {
             Forgot your password?
           </h1>
           <p className="text-center">Don’t worry, we got your back!</p>
-          <form className="form flex flex-col justify-center mx-auto gap-2 p-3 w-full sm:w-[80%] md:w-[70%] my-4">
+          <form
+            onSubmit={sendingEmail}
+            className="form flex flex-col justify-center mx-auto gap-2 p-3 w-full sm:w-[80%] md:w-[70%] my-4"
+          >
             <div>
               <div className="border-2 rounded-xl">
                 <input
                   className="w-full bg-transparent border-transparent focus:border-transparent focus:ring-0 placeholder:text-sm"
                   type="email"
                   name="email"
+                  onChange={handleInputForm}
                   placeholder="Enter your email address"
                 />
               </div>
             </div>
             <button
-              id="sendButton"
               type="submit"
               className="h-12 rounded-xl bg-yellow font-['Rubik'] text-brown"
             >

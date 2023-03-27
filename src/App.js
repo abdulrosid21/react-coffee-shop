@@ -16,29 +16,35 @@ import DetailOrder from "./pages/Order/detailOrder";
 import Dashboard from "./pages/Admin";
 import CreateMenus from "./pages/Admin/createMenus";
 import CreatePromo from "./pages/Admin/createPromo";
+import PublicRoute from "./utils/route/publicRoute";
+import PrivateRoute from "./utils/route/privateRoute";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route>
-          <Route path="/" element={<Home />} />
+        <Route element={<PublicRoute />}>
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/reset-password/:id" element={<ResetPassword />} />
           <Route path="/forgotpassword" element={<Forgotpassword />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/products/:id" element={<ProductsDetails />} />
+        </Route>
+        <Route element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/edit-password" element={<EditPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/cart" element={<Order />} />
           <Route path="/your-order" element={<HistoryOrder />} />
           <Route path="/your-order/:id" element={<DetailOrder />} />
+        </Route>
+        <Route element={<PrivateRoute isAdmin />}>
           <Route path="/admin" element={<Dashboard />} />
           <Route path="/admin/create-menu" element={<CreateMenus />} />
           <Route path="/admin/create-promo" element={<CreatePromo />} />
-          <Route path="/*" element={<Notfound />} />
         </Route>
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/products/:id" element={<ProductsDetails />} />
+        <Route path="/*" element={<Notfound />} />
       </Routes>
     </BrowserRouter>
   );

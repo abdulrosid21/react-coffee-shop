@@ -28,7 +28,7 @@ const user = (state = initialState, action) => {
     case "IMAGE_REJECTED": {
       return {
         ...state,
-        data: action.payload.data.data,
+        data: action.payload.data,
         isLoading: false,
         isError: true,
         message: action.payload.response.data.msg,
@@ -80,6 +80,33 @@ const user = (state = initialState, action) => {
       };
     }
     case "PROFILE_REJECTED": {
+      return {
+        ...state,
+        data: action.payload.data.data,
+        isLoading: false,
+        isError: true,
+        message: action.payload.response.data.msg,
+      };
+    }
+    case "UPDATE_PWD_PENDING": {
+      return {
+        ...state,
+        data: {},
+        isLoading: false,
+        isError: false,
+        message: "",
+      };
+    }
+    case "UPDATE_PWD_FULFILLED": {
+      return {
+        ...state,
+        data: action.payload.data.data,
+        isLoading: false,
+        isError: false,
+        message: action.payload.data,
+      };
+    }
+    case "UPDATE_PWD_REJECTED": {
       return {
         ...state,
         data: action.payload.data.data,

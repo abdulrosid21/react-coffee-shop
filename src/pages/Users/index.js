@@ -5,13 +5,14 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable operator-linebreak */
-import React, { useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
+import moment from "moment/moment";
 
 import "react-toastify/dist/ReactToastify.css";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   updateImage,
   getDataUser,
@@ -20,27 +21,34 @@ import {
 
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
+import axios from "../../utils/axios";
 
 function Profile() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.data);
+  const user = useSelector((state) => state.user);
   const [dataUser, setDataUser] = useState({
-    email: user.email,
-    phone: user.phone,
-    first_name: user.first_name,
-    last_name: user.last_name,
-    display_name: user.display_name,
-    dateofbirth: user.dateofbirth,
-    gender: user.gender,
-    address: user.address,
+    email: user.data.email,
+    phone: user.data.phone,
+    first_name: user.data.first_name,
+    last_name: user.data.last_name,
+    display_name: user.data.display_name,
+    dateofbirth: user.data.dateofbirth,
+    gender: user.data.gender,
+    address: user.data.address,
   });
+  const windowRef = useRef();
   const [newImage, setNewImage] = useState({});
   const [imagePreview, setImagePreview] = useState("");
   const imageLength = Object.keys(newImage).length;
-  const [showAlert, setShowAlert] = useState(false);
-
+  const [showButton, setShowButton] = useState(false);
   const [setModal, setShowModal] = useState(false);
 
+  window.addEventListener("click", (e) => {
+    if (e.target === windowRef.current) {
+      setShowButton(!showButton);
+    }
+  });
   const handleInputForm = (e) => {
     setDataUser({ ...dataUser, [e.target.name]: e.target.value });
   };
@@ -73,6 +81,20 @@ function Profile() {
   };
   const handleInputImage = (e) => {
     const { name, files } = e.target;
+    if (files[0].size > 100000) {
+      setShowModal(false);
+      toast.error("Please Insert Max Size 100Kb", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     setNewImage({ [name]: files[0] });
     setImagePreview(URL.createObjectURL(files[0]));
   };
@@ -81,33 +103,53 @@ function Profile() {
     imageData.append("images", newImage.images);
     dispatch(updateImage(imageData)).then(() => {
       setShowModal(false);
-      setShowAlert(true);
+      dispatch(getDataUser());
+      toast.success("Success update image", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     });
   };
-  const handleCloseAlert = () => {
-    dispatch(getDataUser());
-    setShowAlert(false);
+
+  const logout = async () => {
+    try {
+      await axios.post("users/logout");
+      localStorage.clear();
+      toast.info("Success logout from your account", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
+    } catch (error) {
+      toast.error("Can't logout from your account", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
   return (
     <>
       <ToastContainer />
-      {showAlert ? (
-        <div className="text-white px-6 py-4 border-0 rounded relative mb-4 bg-green-500">
-          <span className="text-xl inline-block mr-5 align-middle">
-            <i className="fas fa-bell" />
-          </span>
-          <span className="inline-block align-middle mr-8">
-            <b className="capitalize">Success update Image</b>
-          </span>
-          <button
-            type="button"
-            className="absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none"
-            onClick={handleCloseAlert}
-          >
-            <span>×</span>
-          </button>
-        </div>
-      ) : null}
       {setModal ? (
         <>
           <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
@@ -169,7 +211,10 @@ function Profile() {
       ) : null}
 
       <Navbar />
-      <main className="bg-[url('/src/assets/img/coffeebreak.jpeg')] flex h-full md:h-screen w-screen bg-center bg-no-repeat bg-cover pb-10">
+      <main
+        ref={windowRef}
+        className="bg-[url('/src/assets/img/coffeebreak.jpeg')] flex h-full md:h-screen w-screen bg-center bg-no-repeat bg-cover pb-10"
+      >
         <div className="h-[80%] w-[80%] justify-center m-auto flex flex-col gap-3">
           <div className="md:h-32 w-full">
             <h1 className="font-['Rubik'] text-primary text-3xl">
@@ -198,9 +243,9 @@ function Profile() {
                         <img
                           className="h-20 w-20 rounded-full object-cover object-center mx-auto"
                           src={
-                            user.image
+                            user.data.image
                               ? process.env.REACT_APP_URL_CLOUDINARY +
-                                user.image
+                                user.data.image
                               : `${process.env.REACT_APP_URL_CLOUDINARY}Coffee%20Shop/Basic_Ui__186_rcq7oe.jpg`
                           }
                           alt=""
@@ -332,7 +377,11 @@ function Profile() {
                         className="w-full h-6 bg-transparent border-transparent focus:ring-0 focus:border-transparent"
                         type="date"
                         name="dateofbirth"
-                        value={dataUser.dateofbirth ? dataUser.dateofbirth : ""}
+                        value={
+                          dataUser.dateofbirth
+                            ? moment(dataUser.dateofbirth).format("YYYY-MM-DD")
+                            : "yyyy-MM-dd"
+                        }
                         onChange={handleInputForm}
                       />
                     </div>
@@ -394,7 +443,11 @@ function Profile() {
                 >
                   Save change
                 </button>
-                <button type="button" className="btn bg-yellow text-brown">
+                <button
+                  onClick={() => setShowButton(false)}
+                  type="button"
+                  className="btn bg-yellow text-brown"
+                >
                   Cancel
                 </button>
               </div>
@@ -405,7 +458,7 @@ function Profile() {
                   </h1>
                 </div>
               </Link>
-              <div className="btn  bg-white">
+              <div type="button" onClick={logout} className="btn bg-white">
                 <h1 className="my-auto font-semibold font-['Rubik'] text-brown px-6">
                   Logout
                 </h1>
