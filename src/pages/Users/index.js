@@ -1,10 +1,3 @@
-/* eslint-disable import/named */
-/* eslint-disable indent */
-/* eslint-disable no-nested-ternary */
-/* eslint-disable no-unused-vars */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable operator-linebreak */
 import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";

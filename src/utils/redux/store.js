@@ -1,4 +1,3 @@
-/* eslint-disable import/no-anonymous-default-export */
 import { createStore, applyMiddleware } from "redux";
 import logger from "redux-logger";
 import promiseMiddleware from "redux-promise-middleware";

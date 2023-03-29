@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
 
 function ProductsDetails() {
+  const menus = useSelector((state) => state.menus.data[0]);
   return (
     <>
       <Navbar />
@@ -11,21 +14,23 @@ function ProductsDetails() {
           <div className="h-full w-screen lg:h-4/5 lg:w-3/5 justify-center mx-auto my-[10%]">
             <div className="">
               <h1 className="font-['Poppins'] text-center">
-                Favorite & Promo
-                <span className="font-semibold text-[#6A4029]"> Cold Brew</span>
+                Menu :{" "}
+                <span className="font-semibold text-[#6A4029]">
+                  {menus.menu_name}
+                </span>
               </h1>
             </div>
             <div className="flex flex-col">
               <img
                 className="lg:justify-center mx-auto object-center object-cover w-72 h-72 rounded-full my-5"
-                src={require("../../assets/img/coldcoffee.png")}
+                src={process.env.REACT_APP_URL_CLOUDINARY + menus.image}
                 alt=""
               />
               <h1 className="uppercase font-['Poppins'] text-5xl font-semibold text-center">
-                cold brew
+                {menus.menu_name}
               </h1>
               <p className="uppercase font-['Poppins'] text-3xl text-center">
-                idr 30.000
+                idr {menus.price}
               </p>
             </div>
             <div className="flex flex-col my-2">
@@ -55,11 +60,8 @@ function ProductsDetails() {
                       Monday to friday at 1 - 7 pm
                     </span>
                   </p>
-                  <p className="text-justify my-3">
-                    Cold brewing is a method of brewing that combines ground
-                    coffee and cool water and uses time instead of heat to
-                    extract the flavor. It is brewed in small batches and
-                    steeped for as long as 48 hours.
+                  <p className="text-justify my-3 font-['Poppins']">
+                    {menus.description}
                   </p>
                   <h1 className="text-center font-['Poppins'] font-semibold my-4">
                     Choose Size

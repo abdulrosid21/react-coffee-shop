@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -8,7 +6,7 @@ import { useSelector } from "react-redux";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import axios from "../../utils/axios";
 
-function Navbar() {
+function Navbar({ handleInputForm }) {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.data);
   const token = localStorage.getItem("token");
@@ -161,10 +159,9 @@ function Navbar() {
                       }}
                     />
                     <input
-                      className="border-transparent bg-transparent focus:border-transparent focus:ring-0"
-                      type="text"
-                      name=""
-                      id=""
+                      name="keyword"
+                      onChange={handleInputForm}
+                      className="border-transparent bg-transparent focus:border-transparent focus:ring-0 focus:border-0"
                     />
                   </div>
                 </li>
