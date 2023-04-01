@@ -13,7 +13,11 @@ function Products() {
   const [menus, setMenus] = useState([]);
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
+  const [sorting, setSorting] = useState("descending");
 
+  const handleinputSorting = (e) => {
+    setSorting(e.target.value);
+  };
   const handleInputForm = (e) => {
     setKeyword({ ...keyword, [e.target.name]: e.target.value });
   };
@@ -22,7 +26,7 @@ function Products() {
       const result = await axios.get(
         `menus?keyword=${
           keyword.keyword || ""
-        }&column=&sort=ascending&limit=&category=${reqType}&page=${page}`
+        }&column=&sort=${sorting}&limit=&category=${reqType}&page=${page}`
       );
 
       setMenus(result.data);
@@ -36,7 +40,7 @@ function Products() {
 
   useEffect(() => {
     getDataMenus();
-  }, [reqType, page, keyword]);
+  }, [reqType, page, keyword, sorting]);
   return (
     <>
       <Navbar handleInputForm={handleInputForm} />
@@ -66,7 +70,7 @@ function Products() {
         </div>
         <div className="border-l-[1px] border-neutral-400 md:col-span-3 h-full flex flex-col justify-between">
           <div>
-            <div className="grid md:grid-cols-5 md:gap-2 mt-3">
+            <div className="grid md:grid-cols-6 md:gap-2 mt-3">
               <Button
                 buttonText="Foods"
                 reqType={reqType}
@@ -92,6 +96,16 @@ function Products() {
                 reqType={reqType}
                 setReqType={setReqType}
               />
+              <div>
+                <select
+                  onChange={handleinputSorting}
+                  id="countries"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                >
+                  <option value="descending">Higher</option>
+                  <option value="ascending">Lower</option>
+                </select>
+              </div>
             </div>
             <div className="w-[90%] my-6 mx-auto">
               <ListProduct menus={menus} />
