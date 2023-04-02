@@ -8,18 +8,23 @@ import {
   addQty,
   minusQty,
 } from "../../utils/redux/action/cart";
+import { Link } from "react-router-dom";
 
 function ProductsDetails() {
   const dispatch = useDispatch();
   const menus = useSelector((state) => state.menus.data[0]);
   const menu = useSelector((state) => state.cart.cart);
   const [qty, setQty] = useState(
-    menu.some((c) => c.id === menus.id) ? menu[0].qty : 1
+    menu.some((c) => c.id === menus.id)
+      ? menu.filter((c) => c.id === menus.id)
+      : []
   );
+
   const [size, setSize] = useState(
     menu.some((c) => c.id === menus.id) ? menu[0].size : ""
   );
 
+  console.log(qty);
   return (
     <>
       <Navbar />
@@ -52,7 +57,6 @@ function ProductsDetails() {
                 <button
                   onClick={() => {
                     setSize("");
-                    setQty(1);
                     dispatch(removeFromCart(menus));
                   }}
                   type="button"
@@ -64,7 +68,11 @@ function ProductsDetails() {
                 <button
                   onClick={() => {
                     dispatch(
-                      addMenusToCart({ ...menus, qty: qty, size: size })
+                      addMenusToCart({
+                        ...menus,
+                        qty: qty.length == 0 ? 1 : qty[0].qty,
+                        size: size,
+                      })
                     );
                   }}
                   type="button"
@@ -160,26 +168,15 @@ function ProductsDetails() {
                     <div className="justify-center my-auto">
                       <img
                         className="h-20 w-20 object-center object-cover rounded-full"
-                        src={
-                          menu.some((c) => c.id === menus.id)
-                            ? process.env.REACT_APP_URL_CLOUDINARY +
-                              menu[0].image
-                            : ""
-                        }
+                        src={process.env.REACT_APP_URL_CLOUDINARY + menus.image}
                         alt=""
                       />
                     </div>
                     <div className="justify-center my-auto">
                       <h1 className="font-['Poppins'] text-sm font-semibold uppercase">
-                        {menu.some((c) => c.id === menus.id)
-                          ? menu[0].menu_name
-                          : null}
+                        {menus.menu_name}
                       </h1>
-                      <p className="font-['Poppins'] text-sm">
-                        {menu.some((c) => c.id === menus.id)
-                          ? menu[0].size
-                          : null}
-                      </p>
+                      <p className="font-['Poppins'] text-sm">{size}</p>
                     </div>
                   </div>
                   <div className="w-2/4 h-full flex">
@@ -198,14 +195,23 @@ function ProductsDetails() {
                             dispatch(
                               minusQty({
                                 ...menus,
-                                qty: menu.some((c) => c.id === menus.id)
-                                  ? menu[0].qty
-                                  : qty,
+                                qty: qty.length == 0 ? 1 : qty[0].qty,
                               })
                             );
-                            setQty(qty - 1);
+                            const result = menu.filter(
+                              (c) => c.id === menus.id
+                            );
+                            setQty(result);
                           }}
-                          disabled={qty === 1 ? true : false}
+                          disabled={
+                            qty.length == 0
+                              ? qty == 1
+                                ? true
+                                : false
+                              : qty[0].qty == 1
+                              ? true
+                              : false
+                          }
                         >
                           <span className="m-auto text-2xl font-thin">−</span>
                         </button>
@@ -213,11 +219,7 @@ function ProductsDetails() {
                           type="text"
                           className="focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black md:text-basecursor-default flex items-center text-gray-700 border-transparent"
                           name="custom-input-number"
-                          value={
-                            menu.some((c) => c.id === menus.id)
-                              ? menu[0].qty
-                              : qty
-                          }
+                          value={qty.length == 0 ? 1 : qty[0].qty}
                         />
                         <button
                           type="button"
@@ -226,14 +228,16 @@ function ProductsDetails() {
                             dispatch(
                               addQty({
                                 ...menus,
-                                qty: menu.some((c) => c.id === menus.id)
-                                  ? menu[0].qty
-                                  : qty,
+                                qty: qty.length == 0 ? 1 : qty[0].qty,
                               })
                             );
-                            setQty(qty + 1);
+
+                            const result = menu.filter(
+                              (c) => c.id === menus.id
+                            );
+                            setQty(result);
                           }}
-                          disabled={qty === menus.stock ? true : false}
+                          disabled={qty == menus.stock ? true : false}
                         >
                           <span className="m-auto text-2xl font-thin">+</span>
                         </button>
@@ -242,9 +246,13 @@ function ProductsDetails() {
                   </div>
                 </div>
                 <div className="w-[80%] lg:w-[29%] max-h-36 rounded-xl bg-[#FFBA33] flex shadow-md justify-center mx-auto my-3 lg:my-0">
-                  <h1 className="justify-center m-auto font-['Poppins'] font-semibold text-2xl">
-                    Checkout
-                  </h1>
+                  <div className="justify-center m-auto ">
+                    <Link to="/cart">
+                      <h1 className="font-['Poppins'] font-semibold text-2xl">
+                        Checkout
+                      </h1>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>

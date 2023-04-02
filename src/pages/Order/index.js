@@ -1,8 +1,17 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
+import { useSelector } from "react-redux";
 
 function Order() {
+  const cart = useSelector((state) => state.cart.cart);
+  const [total, setTotal] = useState();
+
+  useEffect(() => {
+    setTotal(
+      cart.reduce((acc, curr) => acc + Number(curr.price) * curr.qty, 0)
+    );
+  }, [cart]);
   return (
     <>
       <Navbar />
@@ -20,32 +29,31 @@ function Order() {
                   Order Summary
                 </h1>
               </div>
-              <div className="grid grid-cols-4 mb-7">
-                <img
-                  className="h-14 w-14 rounded-lg m-auto"
-                  src={require("../../assets/img/hezelnut.png")}
-                  alt=""
-                />
-                <div className="col-span-2">
-                  <h1 className="text-sm">Hezelnut</h1>
-                  <h1 className="text-sm">X1</h1>
-                  <h1 className="text-sm">Reguler</h1>
+              {cart.length < 1 ? (
+                <div className="w-full">
+                  <h1 className="text-center font-semibold my-auto">
+                    Is Empty dude.... just breath and order some menu
+                  </h1>
                 </div>
-                <h1 className="text-sm font-semibold my-auto">IDR 24.000</h1>
-              </div>
-              <div className="grid grid-cols-4 mb-7">
-                <img
-                  className="h-14 w-14 rounded-lg m-auto"
-                  src={require("../../assets/img/jahe.png")}
-                  alt=""
-                />
-                <div className="col-span-2">
-                  <h1 className="text-sm">Chiken wings</h1>
-                  <h1 className="text-sm">X1</h1>
-                  <h1 className="text-sm">Reguler</h1>
-                </div>
-                <h1 className="text-sm font-semibold my-auto">IDR 26.000</h1>
-              </div>
+              ) : (
+                cart.map((item) => (
+                  <div className="grid grid-cols-4 mb-7">
+                    <img
+                      className="h-14 w-14 rounded-lg m-auto"
+                      src={process.env.REACT_APP_URL_CLOUDINARY + item.image}
+                      alt=""
+                    />
+                    <div className="col-span-2">
+                      <h1 className="text-sm">{item.menu_name}</h1>
+                      <h1 className="text-sm">X{" " + item.qty}</h1>
+                      <h1 className="text-sm">{item.size}</h1>
+                    </div>
+                    <h1 className="text-sm font-semibold my-auto">
+                      IDR {item.price}
+                    </h1>
+                  </div>
+                ))
+              )}
               <div className="w-4/5 my-3 mx-auto border-b-2 border-dashed border-neutral-500" />
               <div className="grid grid-cols-2 w-4/5 mx-auto">
                 <div className="">
@@ -54,7 +62,7 @@ function Order() {
                   <h1 className="font-['Rubik'] uppercase">Shipping</h1>
                 </div>
                 <div className="text-end">
-                  <h1 className="font-['Rubik'] uppercase">120000</h1>
+                  <h1 className="font-['Rubik'] uppercase">{total}</h1>
                   <h1 className="font-['Rubik'] uppercase">20000</h1>
                   <h1 className="font-['Rubik'] uppercase">10000</h1>
                 </div>
