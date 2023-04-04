@@ -1,20 +1,105 @@
 import React, { useState, useEffect } from "react";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
+import Delivery from "../../components/Delivery";
 import { useSelector } from "react-redux";
+import axios from "../../utils/axios";
+import { useNavigate } from "react-router-dom";
 
 function Order() {
+  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
   const cart = useSelector((state) => state.cart.cart);
-  const [total, setTotal] = useState();
+  const address = useSelector((state) => state.address.data);
+  const user = useSelector((state) => state.user.data);
+  // const shipping = 5000;
+  const [total, setTotal] = useState(0);
+  const [voucher, setvoucher] = useState({
+    code_promo: "",
+  });
+  const [data, setData] = useState();
+  const [paymentMethod, setPaymentMethod] = useState("card");
 
+  const [discount, setDiscount] = useState(0);
+  const [tax, setTax] = useState(0);
+  const [totalDiscount, setTotalDiscount] = useState(0);
+  const [payment, setTotalPayment] = useState(0);
+  const onOptionChange = (e) => {
+    setPaymentMethod(e.target.value);
+  };
   useEffect(() => {
     setTotal(
       cart.reduce((acc, curr) => acc + Number(curr.price) * curr.qty, 0)
     );
   }, [cart]);
+
+  useEffect(() => {
+    setTax(0.1 * total);
+    setTotalDiscount((discount / 100) * total);
+  }, [total, discount]);
+
+  useEffect(() => {
+    setTotalPayment(total + tax - totalDiscount);
+  }, [total, tax, totalDiscount]);
+  const handleSetVoucher = (e) => {
+    setvoucher({ ...voucher, [e.target.name]: e.target.value });
+  };
+  useEffect(() => {
+    setData({
+      ...address[0],
+      ...voucher,
+      menu: [...cart],
+      totalPayment: payment,
+      discount: totalDiscount,
+      tax: tax,
+      paymentMethod: paymentMethod,
+    });
+  }, [
+    address[0],
+    tax,
+    cart,
+    totalDiscount,
+    total,
+    payment,
+    paymentMethod,
+    voucher.code_promo,
+  ]);
+
+  const handleVoucher = async (e) => {
+    try {
+      e.preventDefault();
+      const result = await axios.post("promos/voucher", voucher);
+      setDiscount(result.data.data[0].discount);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleConfirmPayment = async () => {
+    try {
+      const result = await axios.post("order/add", data);
+      const payment = await axios.post("payment/orders", {
+        order_id: result.data.data.order_id,
+        gross_amount: result.data.data.total_payment,
+      });
+      console.log(payment);
+      window.open(payment.data.data.redirect_url, "_blank");
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <Navbar />
+      {showModal ? (
+        <Delivery
+          showModal={showModal}
+          setShowModal={setShowModal}
+          voucher={voucher}
+        />
+      ) : null}
       <main className="min-h-screen md:h-full w-screen bg-order bg-cover bg-center bg-no-repeat">
         <div className="w-[90%] py-10 grid md:grid-cols-2 gap-10 mx-auto">
           <div className="rounded-xl h-full flex flex-col">
@@ -28,12 +113,23 @@ function Order() {
                 <h1 className="justify-center m-auto text-2xl font-semibold font-['Rubik']">
                   Order Summary
                 </h1>
+                <form className=" my-auto flex" onSubmit={handleVoucher}>
+                  <input
+                    className="max-h-10 bg-transparent border-transparent border-2 border-b-neutral-100 focus:border-transparent focus:ring-0 placeholder:text-sm"
+                    type="text"
+                    name="code_promo"
+                    onChange={handleSetVoucher}
+                    placeholder="Enter voucher here"
+                  />
+                  <button type="submit"></button>
+                </form>
               </div>
               {cart.length < 1 ? (
                 <div className="w-full">
                   <h1 className="text-center font-semibold my-auto">
                     Is Empty dude.... just breath and order some menu
                   </h1>
+                  <input type="submit" value="" />
                 </div>
               ) : (
                 cart.map((item) => (
@@ -59,22 +155,24 @@ function Order() {
                 <div className="">
                   <h1 className="font-['Rubik'] uppercase">Sub Total</h1>
                   <h1 className="font-['Rubik'] uppercase">Tax & Fees</h1>
-                  <h1 className="font-['Rubik'] uppercase">Shipping</h1>
+                  <h1 className="font-['Rubik'] uppercase">Discount</h1>
+                  {/* <h1 className="font-['Rubik'] uppercase">Shipping</h1> */}
                 </div>
                 <div className="text-end">
                   <h1 className="font-['Rubik'] uppercase">{total}</h1>
-                  <h1 className="font-['Rubik'] uppercase">20000</h1>
-                  <h1 className="font-['Rubik'] uppercase">10000</h1>
+                  <h1 className="font-['Rubik'] uppercase">{tax}</h1>
+                  <h1 className="font-['Rubik'] uppercase">{totalDiscount}</h1>
+                  {/* <h1 className="font-['Rubik'] uppercase">{shipping}</h1> */}
                 </div>
               </div>
               <div className="w-4/5 my-3 mx-auto border-b-2 border-dashed border-neutral-500" />
               <div className="w-4/5 h-20 mx-auto">
                 <div className="flex justify-between">
-                  <h1 className="my-auto text-2xl font-semibold font-['Rubik']">
+                  <h1 className="my-auto text-xl font-semibold font-['Rubik']">
                     Total
                   </h1>
-                  <h1 className="my-auto text-2xl font-semibold font-['Rubik']">
-                    150000
+                  <h1 className="my-auto text-xl font-semibold font-['Rubik']">
+                    {payment}
                   </h1>
                 </div>
               </div>
@@ -87,22 +185,95 @@ function Order() {
                 <h1 className="font-['Poppins'] text-lg text-white font-semibold">
                   Address Details
                 </h1>
-                <h2 className="font-['Poppins'] text-white font-medium underline text-xs">
+                <h2
+                  onClick={() => {
+                    setShowModal(true);
+                  }}
+                  className="font-['Poppins'] text-white font-medium underline text-xs cursor-pointer"
+                >
                   Edit
                 </h2>
               </div>
               <div className="w-full bg-white rounded-lg ">
                 <div className="w-4/5 mx-auto grid gap-3 py-3">
-                  <h1 className="font-['Poppins'] text-sm">
-                    <strong>Delivery </strong>
-                    to iskandar street
-                  </h1>
-                  <div className="border-b-[1px] border-neutral-500 border-dashed" />
-                  <h1 className="font-['Poppins'] text-sm text-justify">
-                    Km 5 refinery road oppsite re public road, effurun, Jakarta
-                  </h1>
-                  <div className="border-b-[1px] border-neutral-500 border-dashed" />
-                  <h1 className="font-['Poppins'] text-sm">+62 81348287878</h1>
+                  {address.length > 0 ? (
+                    address[0].delivery_option == "Dine In" ? (
+                      <>
+                        <h1 className="font-['Poppins'] text-sm">
+                          <strong>Delivery </strong>
+                          to table {address[0].delivery_address}
+                        </h1>
+                        <div className="border-b-[1px] border-neutral-500 border-dashed" />
+                        <h1 className="font-['Poppins'] text-sm text-justify">
+                          i will waiting until menu serve
+                        </h1>
+                        <div className="border-b-[1px] border-neutral-500 border-dashed" />
+                        <h1 className="font-['Poppins'] text-sm">
+                          +62 {user.phone}
+                        </h1>
+                      </>
+                    ) : address[0].delivery_option == "Door Delivery" ? (
+                      <>
+                        <h1 className="font-['Poppins'] text-sm">
+                          <strong>Delivery Door </strong>
+                          to {address[0].name}
+                        </h1>
+                        <div className="border-b-[1px] border-neutral-500 border-dashed" />
+                        <h1 className="font-['Poppins'] text-sm text-justify">
+                          {address[0].delivery_address}
+                        </h1>
+                        <div className="border-b-[1px] border-neutral-500 border-dashed" />
+                        <h1 className="font-['Poppins'] text-sm">
+                          +62 {address[0].phone_number}
+                        </h1>
+                      </>
+                    ) : address[0].delivery_option == "Pick Up" ? (
+                      <>
+                        <h1 className="font-['Poppins'] text-sm">
+                          <strong>will Picking Up </strong>
+                          by {user.display_name}
+                        </h1>
+                        <div className="border-b-[1px] border-neutral-500 border-dashed" />
+                        <h1 className="font-['Poppins'] text-sm text-justify">
+                          time : {address[0].eating_time}
+                        </h1>
+                        <div className="border-b-[1px] border-neutral-500 border-dashed" />
+                        <h1 className="font-['Poppins'] text-sm">
+                          +62 {user.phone}
+                        </h1>
+                      </>
+                    ) : (
+                      <>
+                        <h1 className="font-['Poppins'] text-sm">
+                          <strong>Delivery </strong>
+                          to {user.display_name}
+                        </h1>
+                        <div className="border-b-[1px] border-neutral-500 border-dashed" />
+                        <h1 className="font-['Poppins'] text-sm text-justify">
+                          {user.address}
+                        </h1>
+                        <div className="border-b-[1px] border-neutral-500 border-dashed" />
+                        <h1 className="font-['Poppins'] text-sm">
+                          +62 {user.phone}
+                        </h1>
+                      </>
+                    )
+                  ) : (
+                    <>
+                      <h1 className="font-['Poppins'] text-sm">
+                        <strong>Delivery </strong>
+                        to {user.display_name}
+                      </h1>
+                      <div className="border-b-[1px] border-neutral-500 border-dashed" />
+                      <h1 className="font-['Poppins'] text-sm text-justify">
+                        {user.address}
+                      </h1>
+                      <div className="border-b-[1px] border-neutral-500 border-dashed" />
+                      <h1 className="font-['Poppins'] text-sm">
+                        +62 {user.phone}
+                      </h1>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -115,7 +286,10 @@ function Order() {
                   <div className="flex h-10 items-stretch gap-2">
                     <input
                       type="radio"
-                      name="radio-1"
+                      name="paymentMethod"
+                      value="card"
+                      onChange={onOptionChange}
+                      checked={paymentMethod === "card"}
                       className="radio self-center"
                     />
                     <div className="h-10 w-10 bg-yellow rounded-lg flex">
@@ -133,7 +307,10 @@ function Order() {
                   <div className="flex h-10 items-stretch gap-2">
                     <input
                       type="radio"
-                      name="radio-1"
+                      name="paymentMethod"
+                      value="bank account"
+                      onChange={onOptionChange}
+                      checked={paymentMethod === "bank account"}
                       className="radio self-center"
                     />
                     <div className="h-10 w-10 bg-brown rounded-lg flex">
@@ -151,7 +328,10 @@ function Order() {
                   <div className="flex h-10 items-stretch gap-2">
                     <input
                       type="radio"
-                      name="radio-1"
+                      name="paymentMethod"
+                      value="cash on delivery"
+                      onChange={onOptionChange}
+                      checked={paymentMethod === "cash on delivery"}
                       className="radio self-center"
                     />
                     <div className="h-10 w-10 bg-soft-yellow rounded-lg flex">
@@ -168,10 +348,16 @@ function Order() {
                 </div>
               </div>
             </div>
-            <div className="w-full h-14 rounded-lg bg-brown flex">
-              <h1 className="font-['Rubik'] font-semibold text-white justify-center m-auto">
+            <div
+              onClick={handleConfirmPayment}
+              className="w-full h-14 rounded-lg bg-brown flex cursor-pointer"
+            >
+              <button
+                type="button"
+                className="font-['Rubik'] font-semibold text-white justify-center m-auto"
+              >
                 Confirm and Pay
-              </h1>
+              </button>
             </div>
           </div>
         </div>

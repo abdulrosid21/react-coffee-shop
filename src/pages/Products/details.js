@@ -23,8 +23,6 @@ function ProductsDetails() {
   const [size, setSize] = useState(
     menu.some((c) => c.id === menus.id) ? menu[0].size : ""
   );
-
-  console.log(qty);
   return (
     <>
       <Navbar />
