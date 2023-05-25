@@ -4,8 +4,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { signin } from "../../utils/redux/action/signin";
 import { getDataUser } from "../../utils/redux/action/userId";
+import MoonLoader from "react-spinners/MoonLoader";
 
 function Signin() {
+  const [loading, setLoading] = useState(false);
+  const [modal, setModal] = useState(false);
+  const [success, setSucces] = useState(false);
+  const [message, setMessage] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -19,16 +24,62 @@ function Signin() {
   const handleSignIn = async (e) => {
     try {
       e.preventDefault();
+      setLoading(true);
       const result = await dispatch(signin(form));
       localStorage.setItem("token", result.value.data.token);
       await dispatch(getDataUser());
-      navigate("/");
+      setMessage(result.value.data.msg);
+      setLoading(false);
+      setSucces(true);
+      setModal(true);
     } catch (error) {
-      console.log(error);
+      setLoading(false);
+      setMessage(error.response.data.msg);
+      setSucces(false);
+      setModal(true);
     }
   };
   return (
     <main className="flex">
+      {loading ? (
+        <div className="fixed inset-0 flex items-center justify-center z-50 ">
+          <div className="bg-white p-8 rounded shadow-lg">
+            <h1 className="text-center mb-2">Loading</h1>
+            <MoonLoader color="#FFBA33" />
+          </div>
+        </div>
+      ) : null}
+      {modal ? (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div
+            className={`flex ${
+              success
+                ? "bg-green-500 p-8 rounded shadow-lg"
+                : "bg-red-600 p-8 rounded shadow-lg"
+            }`}
+          >
+            <h2 className="text-lg font-bold mb-4 my-auto">{message}</h2>
+            {success ? (
+              <button
+                onClick={() => {
+                  setModal(false);
+                  navigate("/");
+                }}
+                className="m-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold p-2 rounded"
+              >
+                X
+              </button>
+            ) : (
+              <button
+                onClick={() => setModal(false)}
+                className="m-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold p-2 rounded"
+              >
+                X
+              </button>
+            )}
+          </div>
+        </div>
+      ) : null}
       <section className="hidden sm:flex flex-1 bg-image-primary min-h-screen bg-cover bg-center" />
       <section className="flex-1 bg-image-primary bg-cover sm:bg-none grid w-full">
         <div className="bg-white opacity-95 sm:rounded-xl p-2 grid gap-3">

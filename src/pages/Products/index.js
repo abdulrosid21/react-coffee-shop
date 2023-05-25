@@ -8,23 +8,30 @@ import Navbar from "../../components/Navbar";
 import Promo from "../../components/Promos";
 import axios from "../../utils/axios";
 
+import { useLocation } from "react-router-dom";
+import queryString from "query-string";
+
 function Products() {
   const [reqType, setReqType] = useState("Foods");
   const [menus, setMenus] = useState([]);
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
   const [sorting, setSorting] = useState("descending");
+  const location = useLocation();
+  const parsedQuery = queryString.parse(location.search);
 
-  const handleinputSorting = (e) => {
+  const handleInputSorting = (e) => {
     setSorting(e.target.value);
   };
+
   const handleInputForm = (e) => {
     setKeyword({ ...keyword, [e.target.name]: e.target.value });
   };
+
   const getDataMenus = async () => {
     try {
       const result = await axios.get(
-        `menus?keyword=${
+        `/menus?keyword=${
           keyword.keyword || ""
         }&column=&sort=${sorting}&limit=&category=${reqType}&page=${page}`
       );
@@ -34,6 +41,7 @@ function Products() {
       console.log(error);
     }
   };
+
   useEffect(() => {
     getDataMenus();
   }, []);
@@ -41,6 +49,19 @@ function Products() {
   useEffect(() => {
     getDataMenus();
   }, [reqType, page, keyword, sorting]);
+
+  useEffect(() => {
+    const query = queryString.stringify({
+      ...parsedQuery,
+      keyword: keyword.keyword || "",
+      category: reqType,
+      sort: sorting,
+      page: page,
+    });
+
+    history.pushState({}, "", `/products?${query}`);
+  }, [reqType, page, keyword, sorting]);
+
   return (
     <>
       <Navbar handleInputForm={handleInputForm} />
@@ -98,7 +119,7 @@ function Products() {
               />
               <div>
                 <select
-                  onChange={handleinputSorting}
+                  onChange={handleInputSorting}
                   id="countries"
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
